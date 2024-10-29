@@ -1,0 +1,41 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - MyPages</title>
+    <link rel="icon" type="image/x-icon" href="~/AdminLTE/LTELogo.png">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback">
+    <link rel="stylesheet" href="https://code.ionicframework.com/ionicons/2.0.1/css/ionicons.min.css">
+    <link rel="stylesheet" href="~/AdminLTE/plugins/fontawesome-free/css/all.min.css">
+    <link rel="stylesheet" href="~/AdminLTE/plugins/sweetalert2-theme-bootstrap-4/bootstrap-4.min.css">
+    <link rel="stylesheet" href="~/AdminLTE/plugins/toastr/toastr.min.css">
+    <link rel="stylesheet" href="~/AdminLTE/plugins/tempusdominus-bootstrap-4/css/tempusdominus-bootstrap-4.min.css">
+    <link rel="stylesheet" href="~/AdminLTE/dist/css/adminlte.min.css">
+    <link rel="stylesheet" href="~/AdminLTE/plugins/icheck-bootstrap/icheck-bootstrap.min.css">
+    <link rel="stylesheet" href="~/AdminLTE/plugins/datatables-bs4/css/dataTables.bootstrap4.min.css">
+    <link rel="stylesheet" href="~/AdminLTE/plugins/overlayScrollbars/css/OverlayScrollbars.min.css">
+    <link rel="stylesheet" href="~/AdminLTE/plugins/daterangepicker/daterangepicker.css">
+    <link rel="stylesheet" href="~/AdminLTE/plugins/summernote/summernote-bs4.min.css">
+</head>
+<body class="hold-transition sidebar-mini layout-fixed">
+@await Html.PartialAsync("_ValidationScriptsPartial")
+<div class="wrapper">
+    @await Html.PartialAsync("_Header")
+
+    @await Html.PartialAsync("_Sidebar")
+
+    <div class="content-wrapper">
+        <section class="content">
+            @RenderBody()
+        </section>
+    </div>
+
+    @await Html.PartialAsync("_Footer")
+
+    <aside class="control-sidebar control-sidebar-dark">
+    </aside>
+</div>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

@@ -1,0 +1,138 @@
+
+@{
+    ViewData["Title"] = "User Page";
+}
+  <div class="container-fluid">
+    <section class="content-header">
+      <div class="container-fluid">
+        <div class="row mb-2">
+          <div class="col-sm-6">
+            <div class="row mb-2">
+            <h1>User Dashboard</h1>
+            </div>
+          </div>
+          <div class="col-sm-6">
+            <ol class="breadcrumb float-sm-right">
+              <li class="breadcrumb-item"><a asp-controller="Home" asp-action="Index">Home</a></li>
+              <li class="breadcrumb-item active">Users</li>
+            </ol>
+          </div>
+        </div>
+      </div>
+    </section>
+    <div class="card">
+      <div class="card-header">
+        <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#modal-default">
+            Add Data
+        </button>
+        <button type="button" class="btn btn-success swalDefaultSuccess" id="swalDefaultSuccess">
+          Launch Success Toast
+        </button>
+      </div>
+      <div class="card-body">
+          <table class="table table-striped text-center display nowrap" id="mainTable">
+              <thead>
+                  <tr>
+                      <th>No.</th>
+                      <th>Role Name</th>
+                      <th>NIK</th>
+                      <th>Username</th>
+                      <th>Office Email</th>
+                      <th>Kode Department</th>
+                      <th>Nama Department</th>
+                  </tr>
+              </thead>
+              <tbody></tbody>
+          </table>
+      </div>
+    </div>
+  </div>
+
+    <div class="modal fade" id="modal-default">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header bg-info">
+            <h4 class="modal-title">Add User</h4>
+            <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body">
+            <div class="form-group">
+              <label for="nik">NIK</label>
+              <input type="text" class="form-control" id="nik" name="nik" placeholder="Auto generate" disabled>
+            </div>
+            <label for="username">Username</label>
+            <div class="input-group mb-1">
+              <div class="input-group-prepend">
+                  <span class="input-group-text"><i class="fas fa-user"></i></span>
+              </div>
+              <input type="text" class="form-control" id="username" name="username" placeholder="Insert Full Name" autocomplete="on">
+            </div>
+              <label for="office_email">Office Email</label>
+            <div class="input-group">
+              <div class="input-group-prepend">
+                  <span class="input-group-text"><i class="fas fa-envelope"></i></span>
+                </div>
+              <input type="email" class="form-control" id="office_email" name="office_email" placeholder="Insert Email">
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-primary">Save changes</button>
+            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+@section Scripts {
+  <script type="text/javascript">
+    $(document).ready(function () {
+      $('#mainTable').DataTable({
+          "processing": false,
+          "serverSide": true,
+          "ordering": true,
+          "order": [[0, 'asc']],
+          "deferRender": true,
+          "aLengthMenu": [
+              [10, 100, 1000, 10000, 100000, 1000000],
+              [10, 100, 1000, 10000, 100000, "All"]
+          ],
+          "ajax": {
+              "url": "/Home/GetProducts",
+              "type": "GET",
+              "datatype": "json"
+          },
+          "columns": [
+              { 
+                "data": "role_id", 
+                "render": function (data, type, row, meta) {
+                  return meta.row + 1; 
+                } 
+              },
+              { "data": "role_name" },
+              { "data": "nik" },
+              { "data": "username" },
+              { "data": "office_email" },
+              { "data": "kode_department" },
+              { "data": "nama_department" },
+          ],
+          "scrollX": true,
+          "scrollCollapse": true,
+          "paging": true,
+      });
+      var Toast = Swal.mixin({
+        toast: true,
+        position: 'center',
+        showConfirmButton: false,
+        timer: 3000
+      });
+      $('.swalDefaultSuccess').click(function() {
+        Toast.fire({
+          icon: 'success',
+          title: 'Lorem ipsum dolor sit amet, consetetur sadipscing elitr.'
+        })
+      });
+    });
+  </script>
+}
