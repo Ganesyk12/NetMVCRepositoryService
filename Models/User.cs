@@ -12,12 +12,12 @@ namespace new_pages.Models
     {
         [Key]
         public string hdrid { get; set; }
-        public string role_id { get; set; }
-        public string role_name { get; set; }
-        public string nik { get; set; }
-        public string username { get; set; }
-        public string office_email { get; set; }
-        public string kode_department { get; set; }
-        public string nama_department { get; set; }
+        public string? role_id { get; set; }
+        public string? role_name { get; set; }
+        public string? nik { get; set; }
+        public string? username { get; set; }
+        public string? office_email { get; set; }
+        public string? kode_department { get; set; }
+        public string? nama_department { get; set; }
     }
 }

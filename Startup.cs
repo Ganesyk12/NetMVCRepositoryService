@@ -9,7 +9,9 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.EntityFrameworkCore;
+// ==================================
 using new_pages.Models;
+using new_pages.Repositories;
 
 namespace new_pages
 {
@@ -24,11 +26,13 @@ namespace new_pages
         // untuk mendaftarkan layanan
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddControllersWithViews();
-
             // menambahkan konfigurasi DBContext untuk koneksi db
-            services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
+            services.AddDbContext<ApplicationDbContext>(options => 
+                options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
+            
+            services.AddScoped<IProductRepository, ProductRepository>();
             services.AddScoped<ProductService>();
+            services.AddControllersWithViews();
         }
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)

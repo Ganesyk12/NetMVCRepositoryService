@@ -95,13 +95,20 @@
           "order": [[0, 'asc']],
           "deferRender": true,
           "aLengthMenu": [
-              [10, 100, 1000, 10000, 100000, 1000000],
+              [10, 100, 1000, 10000, 100000, -1],
               [10, 100, 1000, 10000, 100000, "All"]
           ],
           "ajax": {
               "url": "/Home/GetProducts",
               "type": "GET",
-              "datatype": "json"
+              "datatype": "json",
+              @* "dataSrc": function (json) {
+                return json.data || [];
+              } *@
+              "data": function (d) {
+                  d.searchColumn = $('#searchColumn').val(); // ID kolom input
+                  d.searchValue = $('#searchValue').val();   // ID nilai pencarian
+              }
           },
           "columns": [
               { 
