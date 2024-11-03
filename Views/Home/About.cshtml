@@ -1,4 +1,3 @@
-
 @{
     ViewData["Title"] = "User Page";
 }
@@ -34,6 +33,7 @@
               <thead>
                   <tr>
                       <th>No.</th>
+                      <th>Action</th>
                       <th>Role Name</th>
                       <th>NIK</th>
                       <th>Username</th>
@@ -48,16 +48,17 @@
     </div>
   </div>
 
-    <div class="modal fade" id="modal-default">
-      <div class="modal-dialog">
-        <div class="modal-content">
-          <div class="modal-header bg-info">
-            <h4 class="modal-title">Add User</h4>
-            <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close">
-              <span aria-hidden="true">&times;</span>
-            </button>
-          </div>
-          <div class="modal-body">
+  <div class="modal fade" id="modal-default">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header bg-info">
+          <h4 class="modal-title">Add User</h4>
+          <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <form id="quickform" role="form">
             <div class="form-group">
               <label for="nik">NIK</label>
               <input type="text" class="form-control" id="nik" name="nik" placeholder="Auto generate" disabled>
@@ -70,76 +71,213 @@
               <input type="text" class="form-control" id="username" name="username" placeholder="Insert Full Name" autocomplete="on">
             </div>
               <label for="office_email">Office Email</label>
-            <div class="input-group">
+            <div class="input-group mb-1">
               <div class="input-group-prepend">
                   <span class="input-group-text"><i class="fas fa-envelope"></i></span>
                 </div>
               <input type="email" class="form-control" id="office_email" name="office_email" placeholder="Insert Email">
             </div>
-          </div>
-          <div class="modal-footer">
-            <button type="button" class="btn btn-primary">Save changes</button>
-            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-          </div>
+            <div class="form-group mb-1">
+              <label>Role</label>
+              <select class="select2" multiple="multiple" data-placeholder="Select a Role" style="width: 100%;" id="roleSelect"></select>
+            </div>
+            <div class="form-group mb-1">
+              <label for="selectDept">Department</label>
+              <select class="select2" data-placeholder="Select Department" style="width: 100%;" id="selectDept"></select>
+            </div>
+          </form>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-primary" onclick="Simpan_data()">Save changes</button>
+          <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
         </div>
       </div>
     </div>
+  </div>
+
+  <div class="modal fade" id="modal-delete">
+    <div class="modal-dialog">
+        <div class="modal-content text-white">
+          <div class="modal-header bg-danger">
+              <h4 class="modal-title">Delete User</h4>
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
+          </div>
+          <div class="modal-body bg-danger">
+              Apakah ingin delete <strong id="iddelete"> </strong> ?
+          </div>
+          <div class="modal-footer justify-content-right">
+              <button type="button" id="delete" onclick="Delete_data()" class="btn btn-danger">Yes</button>
+              <button type="button" class="btn btn-default" data-dismiss="modal">No</button>
+          </div>
+        </div>
+    </div>
+  </div>
 
 @section Scripts {
   <script type="text/javascript">
-    $(document).ready(function () {
-      $('#mainTable').DataTable({
-          "processing": false,
-          "serverSide": true,
-          "ordering": true,
-          "order": [[0, 'asc']],
-          "deferRender": true,
-          "aLengthMenu": [
-              [10, 100, 1000, 10000, 100000, -1],
-              [10, 100, 1000, 10000, 100000, "All"]
-          ],
-          "ajax": {
-              "url": "/Home/GetProducts",
-              "type": "GET",
-              "datatype": "json",
-              @* "dataSrc": function (json) {
-                return json.data || [];
-              } *@
-              "data": function (d) {
-                  d.searchColumn = $('#searchColumn').val(); // ID kolom input
-                  d.searchValue = $('#searchValue').val();   // ID nilai pencarian
-              }
-          },
-          "columns": [
-              { 
-                "data": "role_id", 
-                "render": function (data, type, row, meta) {
-                  return meta.row + 1; 
-                } 
-              },
-              { "data": "role_name" },
-              { "data": "nik" },
-              { "data": "username" },
-              { "data": "office_email" },
-              { "data": "kode_department" },
-              { "data": "nama_department" },
-          ],
-          "scrollX": true,
-          "scrollCollapse": true,
-          "paging": true,
-      });
-      var Toast = Swal.mixin({
-        toast: true,
-        position: 'center',
-        showConfirmButton: false,
-        timer: 3000
-      });
-      $('.swalDefaultSuccess').click(function() {
-        Toast.fire({
-          icon: 'success',
-          title: 'Lorem ipsum dolor sit amet, consetetur sadipscing elitr.'
-        })
-      });
+    var Toast = Swal.mixin({
+      toast: true,
+      position: 'center',
+      showConfirmButton: false,
+      timer: 3000,
+      willOpen: () => {
+        // Mendapatkan elemen toast dan mengatur CSS inline
+        const toastElement = Swal.getPopup();
+        const iconElement = toastElement.querySelector('.swal2-icon');
+        toastElement.style.display = 'flex';
+        toastElement.style.alignItems = 'center';
+        toastElement.style.justifyContent = 'center';
+        toastElement.style.padding = '1rem';
+        if (iconElement) {
+            iconElement.style.marginRight = '10px';
+            iconElement.style.fontSize = '15px';
+        }
+      }
     });
+
+    function showToastr(message, title, type) {
+      switch (type) {
+        case 'success':
+            toastr.success(message, title, { timeOut: 2000 });
+            break;
+        case 'error':
+            toastr.error(message, title, { timeOut: 2000 });
+            break;
+        case 'warning':
+            toastr.warning(message, title, { timeOut: 2000 });
+            break;
+        default:
+            toastr.info(message, title, { timeOut: 2000 });
+            break;
+      }
+    }
+
+    $(document).ready(function () {
+      $('.select2').select2()
+
+      $('#roleSelect').select2({
+        placeholder: "Select a Role",
+        ajax: {
+          url: '@Url.Action("GetAllRoles", "Home")',
+          dataType: 'json',
+          processResults: (data) => {
+            return {
+                results: data
+            };
+          }
+        }
+      });
+
+      $('#selectDept').select2({
+        placeholder: "Select Department",
+        ajax: {
+          url: '@Url.Action("GetAllDept", "Home")',
+          dataType: 'json',
+          processResults: (data) => {
+            return {
+              results:data
+            };
+          }
+        }
+      });
+
+      $('#mainTable').DataTable({
+        "processing": false,
+        "serverSide": true,
+        "ordering": true,
+        "order": [[2, 'asc']],
+        "deferRender": true,
+        "aLengthMenu": [
+            [10, 100, 1000, 10000, 100000, -1],
+            [10, 100, 1000, 10000, 100000, "All"]
+        ],
+        "ajax": {
+          "url": "/Home/GetProducts",
+          "type": "GET",
+          "datatype": "json",
+          "dataSrc": (json) => {
+            return json.data || [];
+          }
+        },
+        "columns": [
+          { 
+            "data": "role_id",
+            "sortable": false,
+            "render": (data, type, row, meta) => {
+              return meta.row + 1; 
+            }
+          },
+          {
+            "data": "hdrid",
+            "sortable": false,
+            "render": function (data, type, row, meta) {
+              menu = '';
+              menu += '<div class="btn btn-success btn-sm mr-1 konfirmasiView" data-id="' + data + '" data-toggle="modal" data-target="#agendaModal" > <i class="fa fa-eye"></i></div>';
+              menu += '<div class="btn btn-primary btn-sm mr-1 konfirmasiEdit" data-id="' + data + '" data-toggle="modal" data-target="#agendaModal" > <i class="fa fa-edit"></i></div>';
+              menu += '<div class="btn btn-danger btn-sm mr-1 konfirmasiDelete" data-id="' + data + '" data-toggle="modal" data-target="#modal-delete" > <i class="fa fa-trash"></i></div>';
+              return menu;
+            }
+          },
+          { "data": "role_name" },
+          { "data": "nik" },
+          { "data": "username" },
+          { "data": "office_email" },
+          { "data": "kode_department" },
+          { "data": "nama_department" },
+        ],
+        "scrollX": true,
+        "scrollCollapse": true,
+        "paging": true,
+      });
+     
+      $('.swalDefaultSuccess').click(() => {
+        showToastr('Lorem ipsum dolor sit amet!', 'Success', 'success');
+      });
+
+      $(document).on("click", ".konfirmasiDelete", function() {
+        $('#iddelete').text($(this).attr("data-id"));
+      });
+
+    });
+
+    function Save_data() {
+      const formData = $('#quickform').serializeArray();
+
+      $.ajax({
+        url: '@Url.Action("", "")',
+        type: 'POST',
+        data: formData,
+        success: function () {
+          $('#modal-default').modal('hide');
+          $('#mainTable').DataTable().ajax.reload();
+        },
+        error: function (xhr, status, error, response) {
+          const errorMessage = response.message || "Terjadi kesalahan saat menghapus data.";
+          showToastr(errorMessage, 'Error', 'error');
+        }
+      })
+    }
+
+    function Delete_data() {
+      const hdrid = $('#iddelete').text();
+
+      $.ajax({
+        url: '@Url.Action("DeleteData", "Home")',
+        type: 'DELETE',
+        data: { hdrid: hdrid },
+        success: function (response) {
+          $('#modal-delete').modal('hide');
+          $('#mainTable').DataTable().ajax.reload();
+          showToastr(response.message, 'Success', 'success');
+        },
+        error: function (xhr, status, error, response) {
+          const errorMessage = response.message || "Terjadi kesalahan saat menghapus data.";
+          showToastr(errorMessage, 'Error', 'error');
+        }
+      });
+    }
+
   </script>
 }

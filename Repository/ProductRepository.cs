@@ -22,7 +22,7 @@ namespace new_pages.Repositories
 
          public async Task<User?> GetByIdAsync(string hdrid)
         {
-            return await _context.Users.FirstOrDefaultAsync(p => p.hdrid.ToString() == hdrid);
+            return await _context.Users.FirstOrDefaultAsync(p => p.hdrid == hdrid);
         }
 
         public async Task AddAsync(User user)
