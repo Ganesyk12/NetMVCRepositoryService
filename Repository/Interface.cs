@@ -8,6 +8,8 @@ namespace new_pages.Repositories
     public interface IProductRepository
     {
         IQueryable<User> GetAllAsync();
+        Task<string> GetMaxHdridStartingWithAsync(string prefix);
+        Task<string> GetMaxNikStartingWithAsync(string prefix);
         Task<User?> GetByIdAsync(string hdrid);
         Task AddAsync(User user);
         Task UpdateAsync(User user);

@@ -74,6 +74,13 @@ namespace new_pages.Controllers
             };
         }
 
+        [HttpPost]
+        public async Task<IActionResult> SaveUserData(User user)
+        {
+            await _productService.SaveUserDataAsync(user);
+            return Json(new { message = "Data berhasil disimpan" });
+        }
+
         [HttpGet]
         public async Task<IActionResult> GetAllRoles()
         {

@@ -16,5 +16,6 @@ namespace new_pages.Models
         public string? office_email { get; set; }
         public string? kode_department { get; set; }
         public string? nama_department { get; set; }
+        public string? transaction_date { get; set; }
     }
 }

@@ -244,14 +244,21 @@
 
     function Save_data() {
       const formData = $('#quickform').serializeArray();
+      const fdata = new FormData();
+      $.each(formData, function(key, input) {
+          fdata.append(input.name, input.value);
+      });
 
       $.ajax({
-        url: '@Url.Action("", "")',
+        url: '@Url.Action("SaveUserData", "Home")',
         type: 'POST',
-        data: formData,
+        data: fdata,
+        processData: false,
+        contentType: false,
         success: function () {
           $('#modal-default').modal('hide');
           $('#mainTable').DataTable().ajax.reload();
+          showToastr(response.message, 'Success', 'success');
         },
         error: function (xhr, status, error, response) {
           const errorMessage = response.message || "Terjadi kesalahan saat menghapus data.";

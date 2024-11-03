@@ -53,6 +53,41 @@ public class ProductService
         return await _productRepository.GetByIdAsync(hdrid);
     }
 
+     public async Task<string> GenerateHdridAsync()
+    {
+        string prefix = "USR" + DateTime.Now.ToString("YYYYMM");
+        // Dapatkan ID maksimum saat ini dari database, Jika belum ada ID, mulai dari 001
+        string maxHdrid = await _productRepository.GetMaxHdridStartingWithAsync(prefix);
+        if (string.IsNullOrEmpty(maxHdrid))
+        {
+            return $"{prefix}001";
+        }
+        // Ambil angka setelah prefix untuk increment
+        int currentNumber = int.Parse(maxHdrid.Substring(prefix.Length));
+        currentNumber++;
+        return $"{prefix}{currentNumber:D3}";
+    }
+
+    public async Task<string> GenerateNikAsync()
+    {
+        string prefix = "DM" + DateTime.Now.ToString("MMdd");
+        string maxNik = await _productRepository.GetMaxNikStartingWithAsync(prefix);
+        if (string.IsNullOrEmpty(maxNik))
+        {
+            return $"{prefix}001";
+        }
+        int currentNumber = int.Parse(maxNik.Substring(prefix.Length));
+        currentNumber++;
+        return $"{prefix}{currentNumber:D3}";
+    }
+
+    public async Task SaveUserDataAsync(User user)
+    {
+        user.hdrid = await GenerateHdridAsync();
+        user.nik = await GenerateNikAsync();
+        await _productRepository.AddAsync(user);
+    }
+
     public async Task DeleteAsync(string hdrid)
     {
         await _productRepository.DeleteAsync(hdrid);

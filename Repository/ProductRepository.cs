@@ -15,6 +15,24 @@ namespace new_pages.Repositories
             _context = context;
         }
 
+        public async Task<string> GetMaxHdridStartingWithAsync(string prefix)
+        {
+            return await _context.Users
+                                .Where(u => u.hdrid.StartsWith(prefix))
+                                .OrderByDescending(u => u.hdrid)
+                                .Select(u => u.hdrid)
+                                .FirstOrDefaultAsync();
+        }
+
+        public async Task<string> GetMaxNikStartingWithAsync(string prefix)
+        {
+            return await _context.Users
+                                .Where(u => u.nik.StartsWith(prefix))
+                                .OrderByDescending(u => u.nik)
+                                .Select(u => u.nik)
+                                .FirstOrDefaultAsync();
+        }
+
         public IQueryable<User> GetAllAsync()
         {
             return _context.Users.AsQueryable();
