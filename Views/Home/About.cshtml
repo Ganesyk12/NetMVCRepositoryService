@@ -117,26 +117,6 @@
 
 @section Scripts {
   <script type="text/javascript">
-    var Toast = Swal.mixin({
-      toast: true,
-      position: 'center',
-      showConfirmButton: false,
-      timer: 3000,
-      willOpen: () => {
-        // Mendapatkan elemen toast dan mengatur CSS inline
-        const toastElement = Swal.getPopup();
-        const iconElement = toastElement.querySelector('.swal2-icon');
-        toastElement.style.display = 'flex';
-        toastElement.style.alignItems = 'center';
-        toastElement.style.justifyContent = 'center';
-        toastElement.style.padding = '1rem';
-        if (iconElement) {
-            iconElement.style.marginRight = '10px';
-            iconElement.style.fontSize = '15px';
-        }
-      }
-    });
-
     function showToastr(message, title, type) {
       switch (type) {
         case 'success':
